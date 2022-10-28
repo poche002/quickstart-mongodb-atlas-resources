@@ -9,6 +9,7 @@ import (
 	"github.com/mongodb/mongodbatlas-cloudformation-resources/util"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/atlas/mongodbatlas"
+	"net/url"
 )
 
 func setup() {
@@ -308,9 +309,10 @@ func Delete(req handler.Request, prevModel *Model, currentModel *Model) (handler
 
 	groupID := *currentModel.ProjectId
 	username := *currentModel.Username
+	escapedUsername := url.PathEscape(username)
 	dbName := *currentModel.DatabaseName
 
-	resp, err := client.DatabaseUsers.Delete(context.Background(), dbName, groupID, username)
+	resp, err := client.DatabaseUsers.Delete(context.Background(), dbName, groupID, escapedUsername)
 	if err != nil {
 		// Log and handle 404 ok
 		if resp != nil && resp.StatusCode == 404 {
